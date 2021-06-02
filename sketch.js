@@ -28,12 +28,9 @@ function setup() {
 	player.addImage(playerImg);
 	player.scale=0.4;
 
-	obstacle=createSprite(player.x, 0, 10, 10);
-	obstacle.addImage(obstacleImg);
-	obstacle.scale=0.15;
+	obstGrp=createGroup();
 
-	laser=createSprite(player.x, player.y, 1,1);
-
+	
 	//Engine.run(engine);
   
 }
@@ -42,18 +39,19 @@ function setup() {
 function draw(){
    background(bg);
   
-if(frameCount%10===0){
+   if(frameCount%10===0){
 	laser=createSprite(player.x, player.y, 1,1);
 	laser.addImage(laserImg);
 	laser.scale=0.08;
-	laser.visible=false;
+	laser.visible=false;	
 }
 
-if(laser.isTouching(obstacle)){
-	obstacle.destroy();
-   laser.changeAnimation('collided',destroy);	
+for(var i=0;i<obstGrp.length;i++){
+if(obstGrp.get(i).isTouching(laser)){
+	obstGrp.get(i).destroy();
+   //laser.changeAnimation('collided',destroy);	
 }
-
+}
 
 if(keyWentDown("space")){
 	laser.velocityY=-6;
@@ -68,14 +66,25 @@ if(keyDown(RIGHT_ARROW)){
 	player.x=player.x+8;
 }
  
- obstacle.velocityY=10;
+ 
 
+spawnMeteorite();	
  
  
   drawSprites();
  }
 
-function spawn(){
-	
+function spawnMeteorite(){
+	if(frameCount%50===0){
+	obstacle=createSprite(player.x, 0, 10, 10);
+	obstacle.addImage(obstacleImg);
+	obstacle.scale=0.15;
+	obstacle.velocityY=10;
+
+	obstGrp.add(obstacle);
+	}
 }
+
+
+	
 
