@@ -4,7 +4,7 @@ const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;*/
 
-var laser
+var laser, gameState;
 
 function preload()
 {
@@ -33,66 +33,100 @@ function setup() {
 	
 	//Engine.run(engine);
 	console.log(windowWidth, windowHeight);
-  
+	console.log(player.y);
+
+	 gameState="start";
 }
 
 
 function draw(){
    background(bg);
-	laserGrp.debug=true;
-  
-  
 
+   if(gameState==="start"){
+	strokeWeight(5);
+	stroke("black")
+	fill("yellow");
+	textSize(35);
+	text("Cosmic Ranger", windowWidth/2-100, windowHeight-600);
+	fill("orange");
+	textSize(25);
+	text("Shoot the lasers and don't let the meteorites touch you!",
+	 windowWidth/2-250, windowHeight-500);
+	text("Press 'enter' to play", windowWidth/2-250, windowHeight-450);
+   }
+	if(keyDown(ENTER)){
+		gameState="play";
+	}
+
+	if(gameState==="play"){
 if(keyWentDown("space")){
-	laserGrp.setVelocityYEach=-6;
-	laserGrp.visibleEach=true;
+	spawnLas();
 }
 
 for(var i=0;i<obstGrp.length;i++){
 if(laserGrp.isTouching(obstGrp.get(i))){
 	obstGrp.get(i).destroy();
-   //laser.changeAnimation('collided',destroy);	
+   	
 }
 }
 
+
+
+
+/*if(keyDown(UP_ARROW)){
+	player.y=player.y-8;
+	
+}*/
 
 
 if(keyDown(LEFT_ARROW)){
 	player.x=player.x-8;
+	
 }
 
 if(keyDown(RIGHT_ARROW)){
 	player.x=player.x+8;
-}
- 
- spawnLas();
+	
+} 
 
 spawnMeteorite();	
  
+drawSprites();
+
+}
+
+for(var i=0;i<obstGrp.length;i++){
+	if(obstGrp.isTouching(player)){
+		gameState="end";
+	}
+}
+
+if(gameState==="end"){
+	fill("red");
+	textSize(40);
+	text("Game Over!", windowWidth/2-100, windowHeight-400);
+	obstGrp.destroyEach();
+	player.destroy();
+}
  
-  drawSprites();
- }
+}
 
 function spawnMeteorite(){
 	if(frameCount%50===0){
-	obstacle=createSprite(player.x, windowHeight-691, 10, 10);
+	obstacle=createSprite(player.x, windowHeight-600, 10, 10);
 	obstacle.addImage(obstacleImg);
 	obstacle.scale=0.15;
-	obstacle.velocityY=10;
-
+	obstacle.velocityY=8;
 	obstGrp.add(obstacle);
 	}
 }
 
 function spawnLas(){
-	if(frameCount%10===0){
 		laser=createSprite(player.x, player.y, 1,1);
 		laser.addImage(laserImg);
 		laser.scale=0.08;
-		laser.visible=false;
-		
+		laser.velocityY=-6;
 		laserGrp.add(laser);
-	}
 }
 	
 
